@@ -1,0 +1,18 @@
+server:
+  port: 8081
+#这里我们使用了多个yml 就需要这样设置
+spring:
+  profiles:
+    active: mapper
+  redis:
+    host: 127.0.0.1
+    port: 6380
+    database: 0
+  elasticsearch:
+    rest:
+      uris: http://127.0.0.1:9200
+redisson:
+  addr:
+    singleAddr:
+      host: redis://127.0.0.1:6379
+      database: 0

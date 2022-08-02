@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wqddg.dao.ShoppingCartMapper">
+  <resultMap id="BaseResultMap" type="com.wqddg.entity.ShoppingCart">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="cart_id" jdbcType="INTEGER" property="cartId" />
+    <result column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="sku_id" jdbcType="VARCHAR" property="skuId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="cart_num" jdbcType="VARCHAR" property="cartNum" />
+    <result column="cart_time" jdbcType="VARCHAR" property="cartTime" />
+    <result column="product_price" jdbcType="DECIMAL" property="productPrice" />
+    <result column="sku_props" jdbcType="VARCHAR" property="skuProps" />
+  </resultMap>
+  <resultMap id="BaseResultMaps" type="com.wqddg.entity.ShoppingCartVo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="cart_id" jdbcType="INTEGER" property="cartId" />
+    <result column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="sku_id" jdbcType="VARCHAR" property="skuId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="cart_num" jdbcType="VARCHAR" property="cartNum" />
+    <result column="cart_time" jdbcType="VARCHAR" property="cartTime" />
+    <result column="product_price" jdbcType="DECIMAL" property="productPrice" />
+    <result column="sku_props" jdbcType="VARCHAR" property="skuProps" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="url" jdbcType="VARCHAR" property="productImg" />
+    <result column="sku_name" jdbcType="VARCHAR" property="skuName" />
+    <result column="sell_price"  property="sellPrice" />
+    <result column="original_price"  property="originalPrice"/>
+  </resultMap>
+
+
+
+    <resultMap id="BaseResultMap_skuStock" type="com.wqddg.entity.ShoppingCartVo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="cart_id" jdbcType="INTEGER" property="cartId" />
+        <result column="product_id" jdbcType="VARCHAR" property="productId" />
+        <result column="sku_id" jdbcType="VARCHAR" property="skuId" />
+        <result column="user_id" jdbcType="VARCHAR" property="userId" />
+        <result column="cart_num" jdbcType="VARCHAR" property="cartNum" />
+        <result column="cart_time" jdbcType="VARCHAR" property="cartTime" />
+        <result column="product_price" jdbcType="DECIMAL" property="productPrice" />
+        <result column="sku_props" jdbcType="VARCHAR" property="skuProps" />
+        <result column="product_name" jdbcType="VARCHAR" property="productName" />
+        <result column="url" jdbcType="VARCHAR" property="productImg" />
+        <result column="sku_name" jdbcType="VARCHAR" property="skuName" />
+        <result column="sell_price"  property="sellPrice" />
+        <result column="original_price"  property="originalPrice"/>
+        <result column="stock" property="skuStock"/>
+    </resultMap>
+
+  <select id="selectShopcartByUserId" parameterType="string" resultMap="BaseResultMaps">
+    SELECT c.*,p.product_name,i.url,s.original_price,s.sell_price,s.sku_name FROM shopping_cart c
+                                                                         INNER JOIN product p
+                                                                                    ON c.product_id=p.product_id
+                                                                         INNER JOIN product_img i
+                                                                                    ON i.item_id=p.product_id
+                                                                         INNER JOIN product_sku s
+                                                                                    ON s.sku_id=c.sku_id
+    WHERE user_id=#{id} AND i.is_main=1
+  </select>
+
+
+  <update id="upadateShoppingCartByCartid" parameterType="int">
+    update shopping_cart set cart_num=#{cartNum} where cart_id=#{carId}
+  </update>
+
+
+  <select id="selectShopcartByyCids" resultMap="BaseResultMaps">
+      SELECT c.*,p.product_name,i.url,s.original_price,s.sell_price,s.sku_name FROM shopping_cart c
+      INNER JOIN product p
+      ON c.product_id=p.product_id
+      INNER JOIN product_img i
+      ON i.item_id=p.product_id
+      INNER JOIN product_sku s
+      ON s.sku_id=c.sku_id
+       where i.is_main=1 and c.cart_id in
+      <foreach collection="lists" item="cid" separator="," open="(" close=")">
+        #{cid}
+      </foreach>
+  </select>
+
+
+    <select id="selectShopcartByyCids_Sku" resultMap="BaseResultMap_skuStock">
+        SELECT c.*,p.product_name,i.url,s.original_price,s.sell_price,s.sku_name,s.stock FROM shopping_cart c
+        INNER JOIN product p
+        ON c.product_id=p.product_id
+        INNER JOIN product_img i
+        ON i.item_id=p.product_id
+        INNER JOIN product_sku s
+        ON s.sku_id=c.sku_id
+        where i.is_main=1 and c.cart_id in
+        <foreach collection="lists" item="cid" separator="," open="(" close=")">
+            #{cid}
+        </foreach>
+    </select>
+
+
+</mapper>
